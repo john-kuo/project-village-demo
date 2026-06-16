@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="darkreader-lock">
+<meta name="color-scheme" content="light only">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0}
+@keyframes riseIn{0%{transform:translateY(16px) scale(.5);opacity:0}60%{opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes floatUp{0%{transform:translateY(6px) scale(.92);opacity:1}70%{opacity:1}100%{transform:translateY(-82px) scale(1);opacity:0}}
+@keyframes plopIn{0%{transform:translateX(-50%) translateY(-44px)}55%{transform:translateX(-50%) translateY(5px)}78%{transform:translateX(-50%) translateY(-3px)}100%{transform:translateX(-50%) translateY(0)}}
+@keyframes popIn{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+@keyframes flameFlick{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.14) rotate(-4deg)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,206,84,0)}50%{box-shadow:0 0 24px 5px rgba(255,206,84,.55)}}
+@keyframes sparkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+@keyframes slideUp{from{transform:translate(-50%,22px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+@keyframes confettiFall{0%{transform:translateY(-40px) rotate(0);opacity:1}100%{transform:translateY(420px) rotate(540deg);opacity:0}}
+</style>
+</helmet>
+<div style="height:100vh;width:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:linear-gradient(180deg,#bfe7f4 0%,#d7eedd 42%,#e6f4e2 100%);position:relative;display:flex;flex-direction:column">
+
+  <sc-if value="{{ showAppbar }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:11px 20px;background:rgba(255,253,247,.86);backdrop-filter:blur(8px);border-bottom:2px solid #e6d9bd;z-index:40;box-shadow:0 2px 0 rgba(0,0,0,.04)">
+    <div style="display:flex;align-items:center;gap:11px;min-width:200px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 3px rgba(255,255,255,.3),inset 0 -4px rgba(0,0,0,.2)">
+        <div style="width:11px;height:11px;background:#f4e3a0;border-radius:2px;transform:rotate(45deg)"></div>
+      </div>
+      <div style="line-height:1.05">
+        <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:#9c8b6e;letter-spacing:.5px">VILLAGE</div>
+        <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:18px;color:#3a3022">{{ villageName }}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:6px;background:#f0e7d2;padding:4px;border-radius:12px;border:2px solid #e0d2b4">
+      <button onClick="{{ goVillage }}" style="{{ tabVillageStyle }}">Village</button>
+      <button onClick="{{ goProjects }}" style="{{ tabProjectsStyle }}">Projects</button>
+      <button onClick="{{ goCheckin }}" style="{{ tabCheckinStyle }}">Check-in</button>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div style="display:flex;align-items:center;gap:8px">
+      <sc-for list="{{ resourceList }}" as="r" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:7px;background:#fffdf7;border:2px solid #e7dbc0;border-radius:11px;padding:5px 11px 5px 6px">
+          <div style="width:20px;height:20px;border-radius:5px;border:2px solid rgba(0,0,0,.22);background:{{ r.color }};box-shadow:inset 0 3px rgba(255,255,255,.4),inset 0 -4px rgba(0,0,0,.16)"></div>
+          <span style="font-weight:800;color:#4a3f30;font-size:14px;min-width:24px;text-align:right">{{ r.amount }}</span>
+        </div>
+      </sc-for>
+      <button onClick="{{ goCheckin }}" style="display:flex;align-items:center;gap:9px;background:#fffdf7;border:2px solid #e3dcf1;border-radius:11px;padding:4px 13px 4px 5px;cursor:pointer" style-hover="border-color:#c9bdec">
+        <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(160deg,#9a86e0,#7158c6);border:2px solid #5a44a8;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px rgba(255,255,255,.3),inset 0 -3px rgba(0,0,0,.2);flex:0 0 auto"><div style="width:8px;height:8px;background:#efe9ff;border-radius:1px;transform:rotate(45deg)"></div></div>
+        <div style="line-height:1.05;text-align:left">
+          <div style="font-weight:800;color:#5a44a8;font-size:12.5px">Lv {{ xpLevel }}</div>
+          <div style="margin-top:3px;height:5px;width:60px;background:#ece3f3;border-radius:99px;overflow:hidden"><div style="height:100%;width:{{ xpPct }}%;background:linear-gradient(90deg,#9a86e0,#7158c6);border-radius:99px"></div></div>
+        </div>
+      </button>
+      <div style="display:flex;align-items:center;gap:7px;background:linear-gradient(160deg,#fff3d6,#ffe3a8);border:2px solid #eec368;border-radius:11px;padding:5px 12px 5px 8px">
+        <div style="width:16px;height:21px;background:linear-gradient(180deg,#ffd66b,#f08a2e);border-radius:50% 50% 50% 50%/62% 62% 40% 40%;animation:flameFlick 1.1s ease-in-out infinite;box-shadow:inset 0 -3px rgba(180,60,0,.3)"></div>
+        <div style="line-height:1.05"><span style="font-weight:800;color:#9a5a14;font-size:14px">{{ streak }}</span><span style="font-size:10px;color:#b07f3a;font-weight:600"> day streak</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ VILLAGE SCREEN ============ -->
+  <sc-if value="{{ isVillage }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 326px;gap:16px;padding:16px">
+
+    <div style="position:relative;border-radius:18px;overflow:hidden;border:3px solid #c9b58f;box-shadow:0 14px 30px rgba(80,60,30,.18),inset 0 0 0 3px rgba(255,255,255,.25);background:radial-gradient(120% 90% at 50% 0%,#a9d56a 0%,#8cc356 55%,#79b24a 100%)">
+      <div style="position:absolute;inset:0;padding:34px;display:flex;align-items:center;justify-content:center">
+        <div style="width:100%;max-width:760px;aspect-ratio:10/7;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(7,1fr)">
+          <sc-for list="{{ tilesView }}" as="t" hint-placeholder-count="70">
+            <div style="position:relative;background:{{ t.bg }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.035);z-index:{{ t.z }}">
+
+              <sc-if value="{{ t.isWater }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;inset:2px;background:linear-gradient(180deg,#6fb8d6,#4f9fc4);border-radius:3px;box-shadow:inset 0 3px rgba(255,255,255,.4),inset 0 -4px rgba(0,40,70,.25)"><div style="position:absolute;top:30%;left:18%;width:36%;height:3px;background:rgba(255,255,255,.55);border-radius:2px;animation:ripple 2.4s ease-in-out infinite"></div></div>
+              </sc-if>
+
+              <sc-if value="{{ t.tree }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:50%;bottom:2%;transform:translateX(-50%);width:96%;z-index:3">
+                  <div style="transform-origin:bottom center;animation:sway 4.5s ease-in-out infinite">
+                    {{ t.treeImg }}
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ t.plot }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;inset:14%;border:2px dashed rgba(60,40,10,.4);border-radius:6px;background:rgba(120,80,30,.14);display:flex;align-items:center;justify-content:center">
+                  <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(60,40,10,.55);text-align:center">PLOT</div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ t.building }}" hint-placeholder-val="{{ false }}">
+                <div title="{{ t.building.tip }}" style="position:absolute;left:50%;bottom:15%;transform:translateX(-50%);width:122%;cursor:default;filter:drop-shadow(0 4px 3px rgba(40,30,10,.3));animation:{{ t.building.anim }};z-index:6">
+                  {{ t.building.img }}
+                  <div style="position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);white-space:nowrap;background:rgba(40,30,18,.85);color:#fff4dc;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.2px">{{ t.building.name }}</div>
+                </div>
+              </sc-if>
+
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="position:absolute;left:16px;bottom:14px;background:rgba(40,30,18,.55);color:#fff;font-size:11px;font-weight:600;padding:5px 11px;border-radius:8px;backdrop-filter:blur(4px)">Tap an empty <b>plot</b> or build from the panel →</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto;padding-right:2px">
+      <div style="background:#fffdf7;border:2px solid #e7dbc0;border-radius:16px;padding:15px 15px 13px;box-shadow:0 6px 16px rgba(80,60,30,.08)">
+        <div style="font-family:'Baloo 2';font-weight:800;font-size:15px;color:#3a3022;margin-bottom:3px">Category → Building</div>
+        <div style="font-size:12px;color:#8a7c64;margin-bottom:11px">Every project type grows its own structure.</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ catLegend }}" as="c" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:36px;height:36px;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:center">{{ c.img }}</div>
+              <div style="line-height:1.15"><div style="font-weight:700;color:#3a3022;font-size:13px">{{ c.building }}</div><div style="font-size:11px;color:#9a8b70">{{ c.label }} projects</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#fffdf7;border:2px solid #e7dbc0;border-radius:16px;padding:15px 15px 13px;box-shadow:0 6px 16px rgba(80,60,30,.08)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px">
+          <div><div style="font-family:'Baloo 2';font-weight:800;font-size:15px;color:#3a3022">Build &amp; Upgrade</div><div style="font-size:12px;color:#8a7c64">Spend resources to grow your village.</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ buildables }}" as="b" hint-placeholder-count="8">
+            <div style="{{ b.cardStyle }}">
+              <div style="width:42px;height:42px;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:center">
+                {{ b.img }}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:700;color:#3a3022;font-size:13.5px;line-height:1.1">{{ b.name }}</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                  <sc-for list="{{ b.costList }}" as="c" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:3px">
+                      <div style="width:13px;height:13px;border-radius:3px;background:{{ c.color }};border:1.5px solid rgba(0,0,0,.2)"></div>
+                      <span style="font-size:11.5px;font-weight:700;color:#6b5e4a">{{ c.amount }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <button onClick="{{ b.build }}" style="{{ b.btnStyle }}">{{ b.btnLabel }}</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </sc-if>
+
+  <!-- ============ LANDING SCREEN ============ -->
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto;background:linear-gradient(180deg,#c4e9f5 0%,#dcefdd 38%,#fbf7ee 70%)">
+
+    <div style="display:flex;align-items:center;gap:14px;padding:18px 34px;max-width:1180px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 3px rgba(255,255,255,.3),inset 0 -4px rgba(0,0,0,.2)"><div style="width:12px;height:12px;background:#f4e3a0;border-radius:2px;transform:rotate(45deg)"></div></div>
+        <span style="font-family:'Baloo 2';font-weight:800;font-size:20px;color:#2e2620">ProjectVillage</span>
+      </div>
+      <div style="flex:1"></div>
+      <button onClick="{{ goVillage }}" style="font-weight:700;font-size:14px;color:#4a3f30;padding:9px 14px;border-radius:10px" style-hover="background:rgba(255,255,255,.5)">Live demo</button>
+      <button onClick="{{ startFresh }}" style="font-weight:800;font-size:14px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:11px;padding:10px 18px;box-shadow:0 3px 0 #2e6a25">Start your village</button>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:20px 34px 10px;display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:2px solid #e7dbc0;border-radius:99px;padding:5px 13px 5px 7px;font-size:12.5px;font-weight:700;color:#7a6a4e;box-shadow:0 3px 8px rgba(80,60,30,.06)">
+          <span style="width:18px;height:22px;background:linear-gradient(180deg,#ffd66b,#f08a2e);border-radius:50% 50% 50% 50%/62% 62% 40% 40%;display:inline-block"></span> Productivity, but it builds something
+        </div>
+        <div style="font-family:'Baloo 2';font-weight:800;font-size:46px;line-height:1.06;color:#2e2620;margin-top:18px;text-wrap:balance">Every milestone you finish<br/>builds a village.</div>
+        <div style="font-size:17px;color:#6b5e4a;line-height:1.5;margin-top:16px;max-width:480px">Break your real-world goals into milestones. Completing them drops <b style="color:#3a8a2e">wood, stone &amp; gold</b> — and your resources raise cottages, workshops and landmarks in a world that’s yours.</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:26px">
+          <button onClick="{{ startFresh }}" style="font-weight:800;font-size:16px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:13px;padding:14px 26px;box-shadow:0 4px 0 #2e6a25">Found your village →</button>
+          <button onClick="{{ goVillage }}" style="font-weight:800;font-size:16px;color:#4a3f30;background:#fff;border:2px solid #e2d5b8;border-radius:13px;padding:14px 22px;box-shadow:0 3px 8px rgba(80,60,30,.07)">Explore the demo</button>
+        </div>
+      </div>
+
+      <div style="position:relative;height:400px;border-radius:22px;overflow:hidden;border:3px solid #c9b58f;box-shadow:0 20px 44px rgba(80,60,30,.2);background:linear-gradient(180deg,#9fd8ef 0%,#bfe7c6 42%,#8cc356 42%,#79b24a 100%)">
+        <div style="position:absolute;top:26px;right:40px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff6cf,#ffd54a);box-shadow:0 0 36px 8px rgba(255,213,74,.5)"></div>
+        <div style="position:absolute;top:40px;left:46px;width:78px;height:24px;background:#fff;border-radius:99px;opacity:.92;box-shadow:34px 8px 0 -4px #fff,-6px 6px 0 -2px #fff"></div>
+        <div style="position:absolute;top:96px;right:96px;width:60px;height:20px;background:#fff;border-radius:99px;opacity:.82;box-shadow:24px 6px 0 -4px #fff"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:58%;background:radial-gradient(120% 140% at 50% 0,#9ccd5e,#79b24a)"></div>
+
+        <div style="position:absolute;left:26px;bottom:70px;width:92px;filter:drop-shadow(0 6px 5px rgba(40,30,10,.25))"><img src="assets/cottage.png" alt="cottage" style="display:block;width:100%;height:auto;image-rendering:pixelated" /></div>
+        <div style="position:absolute;left:166px;bottom:108px;width:114px;filter:drop-shadow(0 6px 5px rgba(40,30,10,.25))"><img src="assets/library.png" alt="library" style="display:block;width:100%;height:auto;image-rendering:pixelated" /></div>
+        <div style="position:absolute;left:300px;bottom:74px;width:92px;filter:drop-shadow(0 6px 5px rgba(40,30,10,.25))"><img src="assets/workshop.png" alt="workshop" style="display:block;width:100%;height:auto;image-rendering:pixelated" /></div>
+        <div style="position:absolute;left:128px;bottom:44px;width:54px;transform-origin:bottom center;animation:sway 4.5s ease-in-out infinite"><img src="assets/tree.png" alt="tree" style="display:block;width:100%;height:auto;image-rendering:pixelated" /></div>
+
+        <div style="position:absolute;right:26px;top:120px;display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;align-items:center;gap:7px;background:#fffdf7;border:2px solid #e7dbc0;border-radius:11px;padding:5px 11px 5px 6px;box-shadow:0 6px 14px rgba(80,60,30,.16)"><div style="width:18px;height:18px;border-radius:5px;background:#b97e45;border:2px solid rgba(0,0,0,.22)"></div><span style="font-weight:800;color:#3a8a2e;font-size:14px">+18</span></div>
+          <div style="display:flex;align-items:center;gap:7px;background:#fffdf7;border:2px solid #e7dbc0;border-radius:11px;padding:5px 11px 5px 6px;box-shadow:0 6px 14px rgba(80,60,30,.16);margin-left:26px"><div style="width:18px;height:18px;border-radius:5px;background:#f0b53c;border:2px solid rgba(0,0,0,.22)"></div><span style="font-weight:800;color:#3a8a2e;font-size:14px">+12</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:40px 34px 18px">
+      <div style="text-align:center;font-family:'Baloo 2';font-weight:800;font-size:13px;letter-spacing:1.5px;color:#a0926f;text-transform:uppercase">Real world → game world</div>
+      <div style="text-align:center;font-family:'Baloo 2';font-weight:800;font-size:30px;color:#2e2620;margin-top:6px">The loop that keeps you going</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px">
+        <sc-for list="{{ loopSteps }}" as="s" hint-placeholder-count="3">
+          <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:18px;padding:22px;box-shadow:0 6px 16px rgba(80,60,30,.07)">
+            <div style="width:34px;height:34px;border-radius:9px;background:{{ s.color }};color:#fff;font-family:'Baloo 2';font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 3px rgba(255,255,255,.3)">{{ s.n }}</div>
+            <div style="font-family:'Baloo 2';font-weight:800;font-size:19px;color:#2e2620;margin-top:14px">{{ s.title }}</div>
+            <div style="font-size:14px;color:#6b5e4a;line-height:1.5;margin-top:6px">{{ s.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:30px 34px 10px">
+      <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:20px;padding:26px 28px;box-shadow:0 6px 16px rgba(80,60,30,.07)">
+        <div style="font-family:'Baloo 2';font-weight:800;font-size:24px;color:#2e2620">Every kind of goal grows something</div>
+        <div style="font-size:14px;color:#8a7c64;margin-top:4px">Your project’s category decides which structure rises in your village.</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:20px">
+          <sc-for list="{{ catShowcase }}" as="c" hint-placeholder-count="4">
+            <div style="text-align:center;padding:18px 12px;border-radius:14px;background:#fbf6ea;border:2px solid #ece0c6">
+              <div style="width:58px;height:62px;margin:0 auto;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 4px 4px rgba(40,30,10,.2))">
+                {{ c.img }}
+              </div>
+              <div style="font-family:'Baloo 2';font-weight:800;font-size:16px;color:#2e2620;margin-top:12px">{{ c.building }}</div>
+              <div style="font-size:12px;font-weight:700;color:{{ c.color }};margin-top:2px">{{ c.label }}</div>
+              <div style="font-size:12px;color:#9a8b70;margin-top:6px">{{ c.example }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:34px 34px 48px">
+      <div style="border-radius:22px;padding:40px 28px;text-align:center;background:radial-gradient(120% 140% at 50% 0,#5aa84a,#3a7d2c);box-shadow:0 16px 36px rgba(60,110,40,.3)">
+        <div style="font-family:'Baloo 2';font-weight:800;font-size:30px;color:#fff;line-height:1.15;text-wrap:balance">Your next milestone is one click<br/>from a brand-new building.</div>
+        <button onClick="{{ startFresh }}" style="margin-top:22px;font-weight:800;font-size:17px;color:#3a7d2c;background:#fff;border:2px solid #e8f3df;border-radius:14px;padding:15px 32px;box-shadow:0 5px 0 rgba(0,0,0,.18)">Start your village — it’s free</button>
+        <div style="color:#dff0d4;font-size:13px;margin-top:14px">No credit card. Name your village in 30 seconds.</div>
+      </div>
+    </div>
+
+  </div>
+  </sc-if>
+
+  <!-- ============ ONBOARDING SCREEN ============ -->
+  <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#bfe7f4 0%,#cdead8 50%,#aed884 100%);overflow:auto">
+    <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(124,178,74,0),#74ab3e);opacity:.6"></div>
+    <div style="position:relative;width:460px;max-width:100%;background:#fffdf7;border:3px solid #eaddc0;border-radius:22px;padding:28px 30px 26px;box-shadow:0 24px 60px rgba(60,45,20,.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px">
+        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 3px rgba(255,255,255,.3),inset 0 -4px rgba(0,0,0,.2)"><div style="width:10px;height:10px;background:#f4e3a0;border-radius:2px;transform:rotate(45deg)"></div></div>
+        <span style="font-family:'Baloo 2';font-weight:800;font-size:17px;color:#3a3022">ProjectVillage</span>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:6px">
+          <div style="width:22px;height:6px;border-radius:99px;background:#3d8a30"></div>
+          <div style="width:22px;height:6px;border-radius:99px;background:{{ step2Dot }}"></div>
+        </div>
+      </div>
+
+      <div style="font-family:'Baloo 2';font-weight:800;font-size:25px;color:#3a3022;line-height:1.12">{{ onboardTitle }}</div>
+      <div style="font-size:14px;color:#8a7c64;margin-top:6px;line-height:1.45">{{ onboardSub }}</div>
+
+      <sc-if value="{{ onboardStep1 }}" hint-placeholder-val="{{ true }}">
+        <input value="{{ onboard.name }}" onChange="{{ onOnboardName }}" placeholder="e.g. Larkhaven, Mossypeak, New Harbor…" style="width:100%;margin-top:20px;font-family:'Baloo 2';font-weight:700;font-size:19px;color:#3a3022;background:#fbf6ea;border:2px solid #e2d5b8;border-radius:13px;padding:14px 16px;outline:none" style-focus="border-color:#5aa84a;background:#fff" />
+      </sc-if>
+
+      <sc-if value="{{ onboardStep2 }}" hint-placeholder-val="{{ false }}">
+        <input value="{{ onboard.projectTitle }}" onChange="{{ onOnboardTitle }}" placeholder="e.g. Learn guitar, Build my app, Write a novel…" style="width:100%;margin-top:18px;font-weight:600;font-size:16px;color:#3a3022;background:#fbf6ea;border:2px solid #e2d5b8;border-radius:13px;padding:13px 15px;outline:none" style-focus="border-color:#5aa84a;background:#fff" />
+        <div style="font-size:12px;font-weight:700;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin:18px 0 9px">Category</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.select }}" style="{{ c.cardStyle }}">
+              <div style="{{ c.swatchStyle }}"></div>
+              <div style="line-height:1.15;min-width:0"><div style="font-weight:700;color:#3a3022;font-size:14px">{{ c.building }}</div><div style="font-size:11.5px;color:#9a8b70">{{ c.label }}</div></div>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-top:24px">
+        <sc-if value="{{ backVisible }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onboardBack }}" style="font-weight:700;font-size:14px;color:#8a7c64;background:none;padding:13px 6px">← Back</button>
+        </sc-if>
+        <div style="flex:1"></div>
+        <button onClick="{{ submitOnboard }}" style="{{ submitBtnStyle }}">{{ submitLabel }}</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ DASHBOARD (PROJECTS) SCREEN ============ -->
+  <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto;padding:24px 28px 40px">
+    <div style="max-width:1000px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px">
+        <div>
+          <div style="font-family:'Baloo 2';font-weight:800;font-size:27px;color:#3a3022;line-height:1.1">Your Projects</div>
+          <div style="color:#8a7c64;font-size:14px">Real-world quests that build {{ villageName }}.</div>
+        </div>
+        <button onClick="{{ startNewProject }}" style="display:flex;align-items:center;gap:7px;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:12px;padding:11px 18px;box-shadow:0 3px 0 #2e6a25">
+          <span style="font-size:18px;line-height:0;margin-top:-1px">+</span> New project
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:13px;background:linear-gradient(100deg,#fff6df,#ffeccb);border:2px solid #f0d79a;border-radius:14px;padding:13px 17px;margin-bottom:18px">
+        <div style="width:30px;height:38px;flex:0 0 auto;background:linear-gradient(180deg,#ffd66b,#f08a2e);border-radius:50% 50% 50% 50%/62% 62% 40% 40%;animation:flameFlick 1.1s ease-in-out infinite;box-shadow:inset 0 -4px rgba(180,60,0,.3)"></div>
+        <div style="font-size:14px;color:#7a5a1e;line-height:1.4"><b style="color:#9a5a14">{{ streak }}-day streak!</b> Keep it alive — finish a milestone today for a <b>+20% resource bonus</b> on every drop.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px">
+        <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:14px;padding:14px 16px"><div style="font-family:'Baloo 2';font-weight:800;font-size:26px;color:#3a3022">{{ totalProjects }}</div><div style="font-size:12.5px;color:#8a7c64;font-weight:600">Active projects</div></div>
+        <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:14px;padding:14px 16px"><div style="font-family:'Baloo 2';font-weight:800;font-size:26px;color:#3a3022">{{ totalMilestonesDone }}<span style="font-size:16px;color:#b3a589">/{{ totalMilestones }}</span></div><div style="font-size:12.5px;color:#8a7c64;font-weight:600">Milestones cleared</div></div>
+        <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:14px;padding:14px 16px"><div style="font-family:'Baloo 2';font-weight:800;font-size:26px;color:#3a3022">{{ inProgressCount }}</div><div style="font-size:12.5px;color:#8a7c64;font-weight:600">In progress</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="4">
+          <button onClick="{{ p.open }}" style="text-align:left;display:block;width:100%;background:#fffdf7;border:2px solid #ece0c6;border-radius:16px;padding:17px;box-shadow:0 5px 14px rgba(80,60,30,.06);cursor:pointer;transition:transform .12s,box-shadow .12s" style-hover="transform:translateY(-3px);box-shadow:0 12px 24px rgba(80,60,30,.12)">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="{{ p.badgeStyle }}">{{ p.catLabel }}</span>
+              <sc-if value="{{ p.isComplete }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:800;color:#3a8a2e;background:#e4f3da;border:1.5px solid #bfe3ad;padding:3px 9px;border-radius:99px">★ Complete</span></sc-if>
+            </div>
+            <div style="font-family:'Baloo 2';font-weight:800;font-size:19px;color:#3a3022;margin-top:11px;line-height:1.15">{{ p.title }}</div>
+            <div style="display:flex;align-items:center;gap:8px;color:#8a7c64;font-size:12.5px;font-weight:600;margin-top:5px">
+              <span>{{ p.deadlineLabel }}</span><span style="opacity:.5">•</span><span style="color:{{ p.color }}">Grows the {{ p.building }}</span>
+            </div>
+            <div style="margin-top:15px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#6b5e4a;margin-bottom:6px"><span>{{ p.done }}/{{ p.total }} milestones</span><span>{{ p.pct }}%</span></div>
+              <div style="height:9px;background:#ece3d0;border-radius:99px;overflow:hidden"><div style="height:100%;border-radius:99px;width:{{ p.pct }}%;background:{{ p.color }}"></div></div>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ PROJECT DETAIL SCREEN ============ -->
+  <sc-if value="{{ isProject }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto;padding:24px 28px 40px">
+    <div style="max-width:780px;margin:0 auto">
+      <button onClick="{{ goProjects }}" style="display:flex;align-items:center;gap:6px;color:#8a7c64;font-weight:700;font-size:13.5px;margin-bottom:14px" style-hover="color:#3a8a2e">← All projects</button>
+
+      <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:18px;padding:21px 23px;box-shadow:0 6px 16px rgba(80,60,30,.07)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+          <div style="min-width:0">
+            <span style="{{ activeProject.badgeStyle }}">{{ activeProject.catLabel }}</span>
+            <div style="font-family:'Baloo 2';font-weight:800;font-size:27px;color:#3a3022;margin-top:9px;line-height:1.12">{{ activeProject.title }}</div>
+            <div style="display:flex;align-items:center;gap:8px;color:#8a7c64;font-size:13px;font-weight:600;margin-top:5px"><span>{{ activeProject.deadlineLabel }}</span><span style="opacity:.5">•</span><span style="color:{{ activeProject.color }}">Grows the {{ activeProject.building }}</span></div>
+          </div>
+          <div style="width:74px;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 4px 4px rgba(40,30,10,.2))">
+            {{ activeProject.img }}
+          </div>
+        </div>
+        <div style="margin-top:17px">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:#6b5e4a;margin-bottom:6px"><span>{{ activeProject.done }}/{{ activeProject.total }} milestones complete</span><span>{{ activeProject.pct }}%</span></div>
+          <div style="height:11px;background:#ece3d0;border-radius:99px;overflow:hidden"><div style="height:100%;border-radius:99px;width:{{ activeProject.pct }}%;background:{{ activeProject.color }}"></div></div>
+        </div>
+        <button onClick="{{ activeProject.checkIn }}" style="margin-top:17px;display:flex;align-items:center;gap:9px;font-weight:800;font-size:13.5px;color:#5a44a8;background:#f3eefc;border:2px solid #ddd2f2;border-radius:12px;padding:11px 16px" style-hover="background:#ece3f8;border-color:#c9bdec"><div style="width:20px;height:20px;border-radius:6px;background:linear-gradient(160deg,#9a86e0,#7158c6);border:2px solid #5a44a8;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px rgba(255,255,255,.3);flex:0 0 auto"><div style="width:7px;height:7px;background:#efe9ff;border-radius:1px;transform:rotate(45deg)"></div></div>Log today’s check-in for this project →</button>
+      </div>
+
+      <div style="font-family:'Baloo 2';font-weight:800;font-size:16px;color:#3a3022;margin:22px 2px 12px">Milestones</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ activeProject.milestones }}" as="m" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:14px;background:#fffdf7;border:2px solid #ece0c6;border-radius:14px;padding:13px 15px;{{ m.rowStyle }}">
+            <button onClick="{{ m.toggle }}" style="flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #cdbfa0;background:#fbf6ea">
+              <sc-if value="{{ m.done }}" hint-placeholder-val="{{ false }}"><div style="width:100%;height:100%;margin:-2px;border-radius:8px;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px">✓</div></sc-if>
+            </button>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:14.5px;line-height:1.25;{{ m.titleDeco }}">{{ m.title }}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+                <span style="font-size:11px;font-weight:700;color:#b3a589;text-transform:uppercase;letter-spacing:.4px">Reward</span>
+                <sc-for list="{{ m.rewardList }}" as="c" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:3px"><div style="width:13px;height:13px;border-radius:3px;background:{{ c.color }};border:1.5px solid rgba(0,0,0,.2)"></div><span style="font-size:11.5px;font-weight:700;color:#6b5e4a">{{ c.amount }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ m.notDone }}" hint-placeholder-val="{{ true }}"><button onClick="{{ m.toggle }}" style="flex:0 0 auto;font-weight:800;font-size:12.5px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:10px;padding:8px 15px;box-shadow:0 2px 0 #2e6a25" style-hover="filter:brightness(1.06)">Complete</button></sc-if>
+            <sc-if value="{{ m.done }}" hint-placeholder-val="{{ false }}"><span style="flex:0 0 auto;font-size:12px;font-weight:800;color:#3a8a2e">+ banked</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ DAILY CHECK-IN SCREEN ============ -->
+  <sc-if value="{{ isCheckin }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Check-in" style="flex:1;min-height:0;overflow:auto;padding:24px 28px 40px">
+    <div style="max-width:720px;margin:0 auto">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-family:'Baloo 2';font-weight:800;font-size:27px;color:#3a3022;line-height:1.1">Daily Check-in</div>
+          <div style="color:#8a7c64;font-size:14px">Log today’s work to earn XP and resources for {{ villageName }}.</div>
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:center;gap:11px;background:#fffdf7;border:2px solid #e3dcf1;border-radius:14px;padding:9px 15px 9px 11px;box-shadow:0 5px 14px rgba(80,60,30,.06)">
+          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(160deg,#9a86e0,#7158c6);border:2px solid #5a44a8;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 3px rgba(255,255,255,.32),inset 0 -4px rgba(0,0,0,.2)"><div style="width:11px;height:11px;background:#efe9ff;border-radius:2px;transform:rotate(45deg)"></div></div>
+          <div style="line-height:1.1">
+            <div style="font-family:'Baloo 2';font-weight:800;font-size:17px;color:#5a44a8">Level {{ xpLevel }}</div>
+            <div style="font-size:11.5px;color:#9a8fb5;font-weight:600">{{ xpInto }} / {{ xpNeed }} XP</div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ checkedInToday }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;background:#e9f5e2;border:2px solid #bfe3ad;border-radius:13px;padding:11px 15px;margin-bottom:16px">
+          <div style="width:22px;height:22px;border-radius:7px;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;flex:0 0 auto">✓</div>
+          <div style="font-size:13.5px;color:#3a7d2c;font-weight:600">You’ve checked in today — your streak is safe. Worked on another project? Log that too.</div>
+        </div>
+      </sc-if>
+
+      <div style="background:#fffdf7;border:2px solid #ece0c6;border-radius:18px;padding:21px 22px;box-shadow:0 6px 16px rgba(80,60,30,.07)">
+
+        <div style="font-size:12px;font-weight:800;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Which project?</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ ciProjectOptions }}" as="p" hint-placeholder-count="4">
+            <button onClick="{{ p.select }}" style="{{ p.style }}"><div style="{{ p.dotStyle }}"></div>{{ p.title }}</button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:12px;font-weight:800;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 9px">What did you do today?</div>
+        <textarea value="{{ checkin.text }}" onChange="{{ onCheckinText }}" placeholder="A sentence or two — e.g. “Built the settings page and fixed the layout bug.”" style="width:100%;min-height:74px;resize:vertical;font-family:'Outfit',sans-serif;font-size:15px;color:#3a3022;background:#fbf6ea;border:2px solid #e2d5b8;border-radius:13px;padding:13px 15px;outline:none;line-height:1.45" style-focus="border-color:#5aa84a;background:#fff"></textarea>
+
+        <div style="font-size:12px;font-weight:800;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 9px">How long did you work?</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px">
+          <sc-for list="{{ timeOptions }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.select }}" style="{{ t.style }}"><div style="{{ t.labelStyle }}">{{ t.label }}</div><div style="{{ t.xpStyle }}">+{{ t.xp }} XP</div></button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:12px;font-weight:800;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 9px">How did it feel?</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
+          <sc-for list="{{ moodOptions }}" as="m" hint-placeholder-count="3">
+            <button onClick="{{ m.select }}" style="{{ m.style }}"><div style="{{ m.dotStyle }}"></div><div style="{{ m.labelStyle }}">{{ m.label }}</div></button>
+          </sc-for>
+        </div>
+
+        <div style="height:2px;background:#f0e8d6;margin:20px 0 16px;border-radius:2px"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:11.5px;font-weight:800;color:#b3a589;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">You’ll earn</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="display:flex;align-items:center;gap:6px;background:#f3eefc;border:2px solid #ddd2f2;border-radius:10px;padding:5px 11px 5px 6px">
+                <div style="width:18px;height:18px;border-radius:5px;background:linear-gradient(160deg,#9a86e0,#7158c6);border:2px solid #5a44a8;box-shadow:inset 0 2px rgba(255,255,255,.32)"></div>
+                <span style="font-weight:800;color:#7158c6;font-size:15px">+{{ previewXp }} XP</span>
+              </div>
+              <span style="color:#cbbfa6;font-weight:800;font-size:15px">+</span>
+              <sc-for list="{{ previewRewardList }}" as="c" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:5px;background:#fbf6ea;border:2px solid #e7dbc0;border-radius:10px;padding:5px 10px 5px 6px">
+                  <div style="width:16px;height:16px;border-radius:4px;background:{{ c.color }};border:1.5px solid rgba(0,0,0,.2)"></div>
+                  <span style="font-weight:800;color:#6b5e4a;font-size:14px">+{{ c.amount }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <button onClick="{{ submitCheckin }}" style="{{ submitCheckinStyle }}">Log check-in →</button>
+        </div>
+      </div>
+
+      <div style="font-family:'Baloo 2';font-weight:800;font-size:16px;color:#3a3022;margin:24px 2px 12px">Recent check-ins</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ checkinLog }}" as="c" hint-placeholder-count="3">
+          <div style="display:flex;align-items:flex-start;gap:14px;background:#fffdf7;border:2px solid #ece0c6;border-radius:14px;padding:14px 16px;box-shadow:0 4px 12px rgba(80,60,30,.05)">
+            <div style="flex:0 0 auto;text-align:center;min-width:50px">
+              <div style="font-family:'Baloo 2';font-weight:800;font-size:18px;color:#7158c6;line-height:1">+{{ c.xp }}</div>
+              <div style="font-size:9.5px;font-weight:800;color:#9a8fb5;letter-spacing:.5px">XP</div>
+            </div>
+            <div style="width:2px;align-self:stretch;background:#f0e8d6;border-radius:2px"></div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+                <span style="{{ c.badgeStyle }}">{{ c.projTitle }}</span>
+                <span style="font-size:11.5px;font-weight:700;color:#9a8b70">{{ c.when }}</span>
+              </div>
+              <div style="font-size:14px;color:#4a3f30;line-height:1.4">{{ c.text }}</div>
+              <div style="display:flex;align-items:center;gap:14px;margin-top:8px">
+                <span style="font-size:12px;font-weight:700;color:#8a7c64">Worked {{ c.timeLabel }}</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#8a7c64"><span style="{{ c.moodDot }}"></span>{{ c.moodLabel }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ REWARD FLYERS ============ -->
+  <sc-if value="{{ hasFlyers }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:80;display:flex;gap:10px;pointer-events:none">
+    <sc-for list="{{ flyers }}" as="f" hint-placeholder-count="0">
+      <div style="display:flex;align-items:center;gap:6px;background:#fffdf7;border:2px solid #e7dbc0;border-radius:11px;padding:5px 11px;box-shadow:0 6px 16px rgba(80,60,30,.2);animation:floatUp 1.15s cubic-bezier(.3,.7,.3,1) forwards">
+        <div style="width:18px;height:18px;border-radius:5px;background:{{ f.color }};border:2px solid rgba(0,0,0,.22);box-shadow:inset 0 2px rgba(255,255,255,.4)"></div>
+        <span style="font-weight:800;color:{{ f.textColor }};font-size:15px">+{{ f.amount }}{{ f.unit }}</span>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <!-- ============ TOAST ============ -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:85;display:flex;align-items:center;gap:10px;background:rgba(36,28,18,.94);color:#fff6e6;padding:11px 18px;border-radius:13px;box-shadow:0 10px 28px rgba(0,0,0,.32);font-weight:600;font-size:14px">
+    <div style="width:10px;height:10px;border-radius:50%;background:{{ toast.accent }}"></div>
+    {{ toast.msg }}
+  </div>
+  </sc-if>
+
+  <!-- ============ PROJECT-COMPLETE CELEBRATION ============ -->
+  <sc-if value="{{ hasCelebrate }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:90;background:radial-gradient(120% 90% at 50% 0%,rgba(40,30,18,.55),rgba(20,14,8,.82));display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)">
+    <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+      <sc-for list="{{ confetti }}" as="p" hint-placeholder-count="0">
+        <div style="{{ p.style }}"></div>
+      </sc-for>
+    </div>
+    <div style="position:relative;width:380px;max-width:90vw;background:#fffdf7;border:3px solid #eaddc0;border-radius:22px;padding:30px 28px 26px;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.45)">
+      <div style="font-family:'Press Start 2P',monospace;font-size:10px;letter-spacing:1px;color:#c69a36;margin-bottom:14px">PROJECT COMPLETE</div>
+      <div style="position:relative;width:120px;height:120px;margin:0 auto 18px;border-radius:18px;background:radial-gradient(circle at 50% 30%,#fff,#f3ead6);border:2px solid #e7dbc0;display:flex;align-items:center;justify-content:center;animation:glowPulse 2.2s ease-in-out infinite">
+        <div style="width:74px;display:flex;align-items:flex-end;justify-content:center">
+          {{ celebrateImg }}
+        </div>
+      </div>
+      <div style="font-family:'Baloo 2';font-weight:800;font-size:23px;color:#3a3022;line-height:1.15">A {{ celebrate.landmark }} appears!</div>
+      <div style="font-size:13.5px;color:#8a7c64;margin-top:7px;line-height:1.45">You finished <b style="color:#3a8a2e">{{ celebrate.projectName }}</b>. This landmark now stands in your village forever.</div>
+      <button onClick="{{ dismissCelebrate }}" style="margin-top:20px;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:12px;padding:11px 26px;box-shadow:0 3px 0 #2e6a25">Visit the village</button>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:760},&quot;villageName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Larkhaven&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;streak&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;landing&quot;,&quot;options&quot;:[&quot;landing&quot;,&quot;onboard&quot;,&quot;village&quot;,&quot;projects&quot;,&quot;checkin&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  CAT = {
+    technical: { label: 'Technical', color: '#e0892e', building: 'Workshop' },
+    creative:  { label: 'Creative',  color: '#d45c9e', building: 'Art Studio' },
+    health:    { label: 'Health',    color: '#4ca65a', building: 'Farm' },
+    learning:  { label: 'Learning',  color: '#4c84c8', building: 'Library' },
+  };
+  RES = {
+    wood:  { label: 'Wood',  color: '#b97e45' },
+    stone: { label: 'Stone', color: '#9aa0a6' },
+    gold:  { label: 'Gold',  color: '#f0b53c' },
+    grain: { label: 'Grain', color: '#e3c24e' },
+  };
+  TIME = {
+    '15min': { label: '15 min', xp: 10 },
+    '30min': { label: '30 min', xp: 25 },
+    '1hr':   { label: '1 hour', xp: 50 },
+    '2hr':   { label: '2 hr+',  xp: 100 },
+  };
+  MOODS = {
+    struggling: { label: 'Struggling',  mult: 1.0,  color: '#c98a3a', tint: '#fbeede', dark: '#9a5a14' },
+    okay:       { label: 'Okay',        mult: 1.0,  color: '#4c84c8', tint: '#e8f0fb', dark: '#2f5e96' },
+    flow:       { label: 'In the flow', mult: 1.25, color: '#e0892e', tint: '#fdf0df', dark: '#9a5a14' },
+  };
+  BUILDABLES = [
+    { key: 'tent',     name: 'Tent',      color: '#b7a07a', cat: null,        cost: { wood: 20 } },
+    { key: 'cottage',  name: 'Cottage',   color: '#c58a4e', cat: null,        cost: { wood: 60, stone: 30 } },
+    { key: 'farm',     name: 'Farm',      color: '#4ca65a', cat: 'health',    cost: { wood: 50, grain: 40 } },
+    { key: 'studio',   name: 'Art Studio',color: '#d45c9e', cat: 'creative',  cost: { wood: 70, stone: 40, gold: 30 } },
+    { key: 'workshop', name: 'Workshop',  color: '#e0892e', cat: 'technical', cost: { wood: 90, stone: 70 } },
+    { key: 'library',  name: 'Library',   color: '#4c84c8', cat: 'learning',  cost: { wood: 80, stone: 60, gold: 20 } },
+    { key: 'townhall', name: 'Town Hall', color: '#caa24a', cat: null,        cost: { wood: 120, stone: 90, gold: 40 } },
+    { key: 'castle',   name: 'Castle',    color: '#8d8f9c', cat: null,        cost: { wood: 200, stone: 200, gold: 120 } },
+  ];
+  SPRITES = {
+    'Tent': 'tent', 'Cottage': 'cottage', 'Farm': 'farm', 'Art Studio': 'studio',
+    'Workshop': 'workshop', 'Library': 'library', 'Town Hall': 'townhall', 'Castle': 'castle',
+  };
+  LANDMARK_SPRITES = {
+    'Clock Tower': 'landmark_technical', 'Grand Theater': 'landmark_creative',
+    'Healing Well': 'landmark_health', 'Great Archive': 'landmark_learning', 'Monument': 'landmark_default',
+  };
+  spriteByName(name) { return 'assets/' + (this.SPRITES[name] || 'cottage') + '.png'; }
+  spriteFor(b) {
+    if (b.landmark) return 'assets/' + (this.LANDMARK_SPRITES[b.name] || 'landmark_default') + '.png';
+    return this.spriteByName(b.name);
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: this.props.startScreen ?? 'landing',
+      villageName: this.props.villageName ?? 'Larkhaven',
+      activeProjectId: null,
+      resources: { wood: 120, stone: 80, gold: 45, grain: 60 },
+      streak: this.props.streak ?? 5,
+      xp: 320,
+      checkin: { projectId: 'p1', text: '', time: '30min', mood: 'okay' },
+      lastCheckinDate: null,
+      checkins: [
+        { id: 'seed1', projectId: 'p1', text: 'Wired up the login screen and squashed two API bugs.', time: '1hr', mood: 'flow', xp: 62, when: 'Yesterday' },
+        { id: 'seed2', projectId: 'p3', text: 'Easy 5K around the park — legs felt fresh.', time: '30min', mood: 'okay', xp: 25, when: '2 days ago' },
+        { id: 'seed3', projectId: 'p2', text: 'Drilled C–G–Am–F changes for a while. Slow going but stuck with it.', time: '15min', mood: 'struggling', xp: 10, when: '3 days ago' },
+      ],
+      flyers: [],
+      celebrate: null,
+      toast: null,
+      onboard: { mode: 'full', step: 1, name: '', category: null, projectTitle: '' },
+      tiles: this.makeTiles(),
+      projects: [
+        { id: 'p1', title: 'Build my app', category: 'technical', deadline: 'Aug 1', completed: false, milestones: [
+          { id: 'a', title: 'Set up the GitHub repo', done: true,  reward: { wood: 14, gold: 6 } },
+          { id: 'b', title: 'Design the data schema', done: true,  reward: { stone: 16, wood: 8 } },
+          { id: 'c', title: 'Build the auth flow',     done: false, reward: { stone: 20, gold: 10 } },
+          { id: 'd', title: 'Ship the MVP',            done: false, reward: { gold: 28, stone: 18 } },
+        ] },
+        { id: 'p2', title: 'Learn fingerstyle guitar', category: 'creative', deadline: null, completed: false, milestones: [
+          { id: 'a', title: 'Learn 4 open chords',       done: true,  reward: { wood: 12, grain: 8 } },
+          { id: 'b', title: 'Smooth C–G–Am–F changes',   done: true,  reward: { grain: 14 } },
+          { id: 'c', title: 'Play first full song',      done: false, reward: { gold: 16, grain: 10 } },
+          { id: 'd', title: 'Record a cover',            done: false, reward: { gold: 22 } },
+        ] },
+        { id: 'p3', title: 'Run a half marathon', category: 'health', deadline: 'Oct 12', completed: false, milestones: [
+          { id: 'a', title: 'Run a 5K without stopping', done: true,  reward: { grain: 16 } },
+          { id: 'b', title: 'Reach 10K distance',        done: false, reward: { grain: 18, wood: 8 } },
+          { id: 'c', title: 'Long run: 18K',             done: false, reward: { grain: 22, gold: 8 } },
+          { id: 'd', title: 'Race day',                  done: false, reward: { gold: 30, grain: 20 } },
+        ] },
+        { id: 'p4', title: 'Read 12 books this year', category: 'learning', deadline: 'Dec 31', completed: false, milestones: [
+          { id: 'a', title: 'Finish book #3',            done: true,  reward: { wood: 10, gold: 6 } },
+          { id: 'b', title: 'Reach the halfway shelf',   done: false, reward: { stone: 14, gold: 8 } },
+          { id: 'c', title: 'Book #9',                   done: false, reward: { stone: 16, gold: 10 } },
+          { id: 'd', title: 'Final book #12',            done: false, reward: { gold: 26, stone: 12 } },
+        ] },
+      ],
+    };
+  }
+
+  makeTiles() {
+    const cols = 10, rows = 7, tiles = [];
+    const grass = ['#88c258', '#94cd64', '#80bb50'];
+    const buildingsAt = {
+      '2,2': { name: 'Cottage', cat: null, color: '#c58a4e' },
+      '6,2': { name: 'Workshop', cat: 'technical' },
+      '3,4': { name: 'Library', cat: 'learning' },
+      '7,4': { name: 'Tent', cat: null, color: '#b7a07a' },
+    };
+    const plots = new Set(['5,1', '1,5', '7,1']);
+    const water = new Set(['8,5', '9,5', '8,6', '9,6']);
+    const trees = new Set(['0,0','9,0','0,6','9,3','6,5','1,2','5,6','8,1']);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const key = c + ',' + r;
+      let bg = grass[(c * 3 + r * 5) % grass.length];
+      let isWater = false, tree = false, plot = false, building = null;
+      if (water.has(key)) { isWater = true; }
+      if (trees.has(key) && !isWater) tree = true;
+      if (plots.has(key)) plot = true;
+      if (buildingsAt[key]) {
+        const b = buildingsAt[key];
+        building = { name: b.name, color: b.color || (b.cat ? this.CAT[b.cat].color : '#c58a4e'), tip: b.name };
+      }
+      tiles.push({ id: key, c, r, bg, isWater, tree, plot, building });
+    }
+    return tiles;
+  }
+
+  go(screen) { this.setState({ screen }); }
+  openProject(id) { this.setState({ activeProjectId: id, screen: 'project' }); }
+
+  showToast(msg, kind) {
+    this.setState({ toast: { msg, kind: kind || 'info', id: Date.now() } });
+    clearTimeout(this._toastT);
+    this._toastT = setTimeout(() => this.setState({ toast: null }), 2400);
+  }
+
+  completeMilestone(pid, mid) {
+    let gained = null, justFinished = null;
+    this.setState((s) => {
+      const projects = s.projects.map((p) => {
+        if (p.id !== pid) return p;
+        return { ...p, milestones: p.milestones.map((m) => (m.id === mid ? { ...m, done: true } : m)) };
+      });
+      const proj = projects.find((p) => p.id === pid);
+      const m = proj.milestones.find((x) => x.id === mid);
+      const res = { ...s.resources };
+      Object.entries(m.reward).forEach(([k, v]) => { res[k] = (res[k] || 0) + v; });
+      gained = m.reward;
+      const flyers = [...s.flyers];
+      const base = Date.now();
+      Object.entries(m.reward).forEach(([k, v], i) => {
+        flyers.push({ id: base + '-' + i, key: k, amount: v, color: this.RES[k].color, label: this.RES[k].label, x: i });
+      });
+      let celebrate = s.celebrate;
+      let tiles = s.tiles;
+      const allDone = proj.milestones.every((x) => x.done);
+      if (allDone && !proj.completed) {
+        proj.completed = true;
+        justFinished = proj;
+        const cat = this.CAT[proj.category];
+        const landmarks = { technical: 'Clock Tower', creative: 'Grand Theater', health: 'Healing Well', learning: 'Great Archive' };
+        const lmName = landmarks[proj.category] || 'Monument';
+        celebrate = { projectName: proj.title, landmark: lmName, color: cat.color, building: cat.building, sprite: 'assets/' + (this.LANDMARK_SPRITES[lmName] || 'landmark_default') + '.png' };
+        tiles = this.placeLandmark(s.tiles, landmarks[proj.category] || 'Monument', cat.color);
+      }
+      return { projects, resources: res, flyers, celebrate, tiles };
+    });
+    const ids = Object.keys(gained || {}).map((k, i) => undefined);
+    setTimeout(() => {
+      this.setState((s) => ({ flyers: s.flyers.filter((f) => Date.now() - parseInt(f.id) < 1150) }));
+    }, 1200);
+    if (!justFinished) this.showToast('Milestone complete! Resources banked.', 'good');
+  }
+
+  placeLandmark(tiles, name, color) {
+    const idx = tiles.findIndex((t) => !t.building && !t.tree && !t.isWater && !t.plot);
+    if (idx === -1) return tiles;
+    this.clearFresh();
+    return tiles.map((t, i) => (i === idx ? { ...t, building: { name, color, tip: name + ' (Landmark)', landmark: true, fresh: true } } : t));
+  }
+
+  clearFresh() {
+    clearTimeout(this._freshT);
+    this._freshT = setTimeout(() => {
+      this.setState((s) => ({ tiles: s.tiles.map((t) => (t.building && t.building.fresh ? { ...t, building: { ...t.building, fresh: false } } : t)) }));
+    }, 800);
+  }
+
+  buildStructure(key) {
+    const b = this.BUILDABLES.find((x) => x.key === key);
+    const res = this.state.resources;
+    const can = Object.entries(b.cost).every(([k, v]) => (res[k] || 0) >= v);
+    if (!can) { this.showToast('Not enough resources for a ' + b.name + '.', 'bad'); return; }
+    this.setState((s) => {
+      const nres = { ...s.resources };
+      Object.entries(b.cost).forEach(([k, v]) => { nres[k] = nres[k] - v; });
+      let placed = false;
+      let tiles = s.tiles.map((t) => {
+        if (!placed && t.plot && !t.building) {
+          placed = true;
+          return { ...t, plot: false, building: { name: b.name, color: b.color, tip: b.name, fresh: true } };
+        }
+        return t;
+      });
+      if (!placed) {
+        const idx = tiles.findIndex((t) => !t.building && !t.tree && !t.isWater);
+        if (idx >= 0) { tiles = tiles.map((t, i) => (i === idx ? { ...t, building: { name: b.name, color: b.color, tip: b.name, fresh: true } } : t)); placed = true; }
+      }
+      this.clearFresh();
+      if (!placed) return {};
+      return { resources: nres, tiles };
+    });
+    if (Object.entries(b.cost).every(([k, v]) => (res[k] || 0) >= v)) this.showToast(b.name + ' built! It rises on your plot.', 'good');
+  }
+
+  dismissCelebrate() { this.setState({ celebrate: null }); }
+
+  levelInfo(xp) {
+    let level = 1, need = 100, into = xp;
+    while (into >= need) { into -= need; level++; need = level * 100; }
+    return { level, into, need, pct: Math.round((into / need) * 100) };
+  }
+  checkinReward(timeKey, moodKey) {
+    const base = this.TIME[timeKey].xp;
+    const r = { grain: Math.round(base * 0.4), wood: Math.round(base * 0.25) };
+    if (moodKey === 'flow') r.gold = Math.max(2, Math.round(base * 0.12));
+    return r;
+  }
+  setCheckin(patch) { this.setState((s) => ({ checkin: { ...s.checkin, ...patch } })); }
+  submitCheckin() {
+    const ci = this.state.checkin;
+    if (!ci.projectId) { this.showToast('Pick a project to check in on.', 'bad'); return; }
+    if (!ci.text.trim()) { this.showToast('Add a quick note about today first.', 'bad'); return; }
+    const t = this.TIME[ci.time], mood = this.MOODS[ci.mood];
+    const xpGain = Math.round(t.xp * mood.mult);
+    const reward = this.checkinReward(ci.time, ci.mood);
+    const today = new Date().toDateString();
+    const oldLevel = this.levelInfo(this.state.xp).level;
+    const newLevel = this.levelInfo(this.state.xp + xpGain).level;
+    this.setState((s) => {
+      const res = { ...s.resources };
+      Object.entries(reward).forEach(([k, v]) => { res[k] = (res[k] || 0) + v; });
+      const b = Date.now();
+      const flyers = [...s.flyers, { id: b + '-xp', key: 'xp', amount: xpGain, color: '#7c6bd0', unit: ' XP' }];
+      Object.entries(reward).forEach(([k, v], i) => flyers.push({ id: b + '-' + i, key: k, amount: v, color: this.RES[k].color }));
+      const entry = { id: 'ci' + b, projectId: ci.projectId, text: ci.text.trim(), time: ci.time, mood: ci.mood, xp: xpGain, when: 'Just now' };
+      const streak = s.lastCheckinDate === today ? s.streak : s.streak + 1;
+      return { resources: res, xp: s.xp + xpGain, flyers, checkins: [entry, ...s.checkins], lastCheckinDate: today, streak, checkin: { ...s.checkin, text: '' } };
+    });
+    setTimeout(() => { this.setState((s) => ({ flyers: s.flyers.filter((f) => Date.now() - parseInt(f.id) < 1150) })); }, 1200);
+    if (newLevel > oldLevel) this.showToast('Level up! Your village reached Level ' + newLevel + '.', 'level');
+    else this.showToast('Checked in! +' + xpGain + ' XP banked.', 'good');
+  }
+
+  setOnboard(patch) { this.setState((s) => ({ onboard: { ...s.onboard, ...patch } })); }
+
+  startNewProject() { this.setState({ screen: 'onboard', onboard: { mode: 'project', step: 2, name: this.state.villageName, category: null, projectTitle: '' } }); }
+  startFresh() { this.setState({ screen: 'onboard', onboard: { mode: 'full', step: 1, name: '', category: null, projectTitle: '' } }); }
+
+  submitOnboard() {
+    const o = this.state.onboard;
+    if (o.mode === 'full' && o.step === 1) {
+      if (!o.name.trim()) return;
+      this.setOnboard({ step: 2 });
+      return;
+    }
+    if (!o.projectTitle.trim() || !o.category) return;
+    const id = 'p' + Date.now();
+    const newProj = {
+      id, title: o.projectTitle.trim(), category: o.category, deadline: null, completed: false,
+      milestones: [
+        { id: 'a', title: 'Set the first concrete goal', done: false, reward: { wood: 12, gold: 6 } },
+        { id: 'b', title: 'Make early progress', done: false, reward: { stone: 14, wood: 8 } },
+        { id: 'c', title: 'Reach the halfway point', done: false, reward: { stone: 16, gold: 10 } },
+        { id: 'd', title: 'Final push & finish', done: false, reward: { gold: 26, stone: 14 } },
+      ],
+    };
+    this.setState((s) => ({
+      villageName: o.name.trim() || s.villageName,
+      projects: [...s.projects, newProj],
+      activeProjectId: id,
+      screen: o.mode === 'full' ? 'village' : 'project',
+    }));
+    this.showToast('Project added — its building awaits your milestones!', 'good');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const spriteImg = (src, alt) => React.createElement('img', { src, alt, draggable: false, style: { display: 'block', width: '100%', height: 'auto', imageRendering: 'pixelated', userSelect: 'none' } });
+    const tabBase = 'font-weight:700;font-size:13px;padding:7px 16px;border-radius:9px;transition:all .15s;';
+    const tabOn = tabBase + 'background:#fff;color:#3a8a2e;box-shadow:0 2px 6px rgba(0,0,0,.12);';
+    const tabOff = tabBase + 'background:transparent;color:#8a7c64;';
+
+    const resourceList = Object.keys(this.RES).map((k) => ({ key: k, label: this.RES[k].label, color: this.RES[k].color, amount: s.resources[k] || 0 }));
+    const catLegend = Object.keys(this.CAT).map((k) => ({ key: k, label: this.CAT[k].label, color: this.CAT[k].color, building: this.CAT[k].building, sprite: this.spriteByName(this.CAT[k].building), img: spriteImg(this.spriteByName(this.CAT[k].building), this.CAT[k].building) }));
+    const loopSteps = [
+      { n: '1', color: '#4c84c8', title: 'Add a project', body: 'A real goal — “Learn guitar”, “Ship my app” — broken into small, completable milestones.' },
+      { n: '2', color: '#e0892e', title: 'Complete milestones', body: 'Check one off and resources drop — wood, stone, gold and grain fly into your stash. Keep a streak for bonuses.' },
+      { n: '3', color: '#4ca65a', title: 'Build your village', body: 'Spend resources on cottages, workshops and libraries. Finish a whole project to unlock a landmark.' },
+    ];
+    const examples = { learning: 'e.g. Read 12 books', technical: 'e.g. Build my app', creative: 'e.g. Write a novel', health: 'e.g. Half marathon' };
+    const catShowcase = Object.keys(this.CAT).map((k) => ({ key: k, label: this.CAT[k].label, color: this.CAT[k].color, building: this.CAT[k].building, example: examples[k], sprite: this.spriteByName(this.CAT[k].building), img: spriteImg(this.spriteByName(this.CAT[k].building), this.CAT[k].building) }));
+
+    const tilesView = s.tiles.map((t) => ({
+      ...t, z: t.r + 1,
+      treeImg: t.tree ? spriteImg('assets/tree.png', 'tree') : null,
+      building: t.building ? { ...t.building, sprite: this.spriteFor(t.building), img: spriteImg(this.spriteFor(t.building), t.building.name), anim: t.building.fresh ? 'plopIn .6s cubic-bezier(.2,.9,.3,1.25)' : 'none' } : null,
+    }));
+
+    const projects = s.projects.map((p) => {
+      const cat = this.CAT[p.category];
+      const total = p.milestones.length;
+      const done = p.milestones.filter((m) => m.done).length;
+      const pct = Math.round((done / total) * 100);
+      return {
+        ...p, color: cat.color, catLabel: cat.label, building: cat.building, buildingSprite: this.spriteByName(cat.building), img: spriteImg(this.spriteByName(cat.building), cat.building),
+        total, done, pct, isComplete: done === total,
+        deadlineLabel: p.deadline ? ('Due ' + p.deadline) : 'No deadline',
+        badgeStyle: 'background:' + cat.color + ';color:#fff;font-weight:700;font-size:11px;padding:3px 9px;border-radius:99px;letter-spacing:.2px;',
+        barFill: 'height:100%;border-radius:99px;width:' + pct + '%;background:linear-gradient(90deg,' + cat.color + ',' + cat.color + ');transition:width .5s cubic-bezier(.3,.8,.3,1);',
+        ringStyle: 'background:conic-gradient(' + cat.color + ' ' + (pct * 3.6) + 'deg, #ece3d0 0deg);',
+        open: () => this.openProject(p.id),
+        checkIn: () => { this.setCheckin({ projectId: p.id }); this.go('checkin'); },
+        milestones: p.milestones.map((m) => ({
+          ...m,
+          rewardList: Object.entries(m.reward).map(([k, v]) => ({ key: k, amount: v, color: this.RES[k].color })),
+          notDone: !m.done,
+          titleDeco: m.done ? 'color:#9a8b70;text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25);' : 'color:#3a3022;',
+          toggle: () => { if (!m.done) this.completeMilestone(p.id, m.id); },
+        })),
+      };
+    });
+    const activeProject = projects.find((p) => p.id === s.activeProjectId) || null;
+
+    const ob = s.onboard;
+    const onboardStep1 = ob.mode === 'full' && ob.step === 1;
+    const categoryOptions = Object.keys(this.CAT).map((k) => {
+      const c = this.CAT[k];
+      const selected = ob.category === k;
+      return {
+        key: k, label: c.label, color: c.color, building: c.building, selected,
+        cardStyle: 'display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:14px;cursor:pointer;text-align:left;width:100%;background:#fff;transition:all .12s;border:2px solid ' + (selected ? c.color : '#e7dbc0') + ';box-shadow:' + (selected ? '0 4px 14px ' + c.color + '44' : '0 2px 6px rgba(80,60,30,.05)') + ';',
+        swatchStyle: 'width:38px;height:38px;flex:0 0 auto;border-radius:9px;background:' + c.color + ';border:2px solid rgba(0,0,0,.22);box-shadow:inset 0 3px rgba(255,255,255,.32),inset 0 -4px rgba(0,0,0,.18);',
+        select: () => this.setOnboard({ category: k }),
+      };
+    });
+    const onboardCanContinue = onboardStep1 ? !!ob.name.trim() : (!!ob.projectTitle.trim() && !!ob.category);
+    const okBtn = 'font-weight:800;font-size:15px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:13px;padding:13px 28px;box-shadow:0 3px 0 #2e6a25;cursor:pointer;';
+    const noBtn = 'font-weight:800;font-size:15px;color:#bdb098;background:#efe7d6;border:2px solid #e0d4ba;border-radius:13px;padding:13px 28px;cursor:not-allowed;';
+
+    let confetti = [];
+    if (s.celebrate) {
+      const cols = ['#f0b53c', '#5aa84a', '#d45c9e', '#4c84c8', '#e0892e', '#fff'];
+      confetti = Array.from({ length: 26 }, (_, i) => {
+        const left = (i * 37 % 100);
+        const c = cols[i % cols.length];
+        const w = 7 + (i % 3) * 3;
+        const delay = (i % 9) * 0.12;
+        const dur = 1.6 + (i % 5) * 0.25;
+        const rad = i % 2 ? '50%' : '2px';
+        return { id: 'cf' + i, style: 'position:absolute;top:-30px;left:' + left + '%;width:' + w + 'px;height:' + (w + 2) + 'px;background:' + c + ';border-radius:' + rad + ';animation:confettiFall ' + dur + 's linear ' + delay + 's infinite' };
+      });
+    }
+
+    const btnOn = 'font-weight:800;font-size:12px;color:#fff;background:linear-gradient(160deg,#5aa84a,#3d8a30);border:2px solid #2e6a25;border-radius:9px;padding:7px 13px;box-shadow:0 2px 0 #2e6a25;';
+    const btnOff = 'font-weight:800;font-size:12px;color:#b3a589;background:#efe7d6;border:2px solid #e0d4ba;border-radius:9px;padding:7px 13px;';
+    const buildables = this.BUILDABLES.map((b) => {
+      const affordable = Object.entries(b.cost).every(([k, v]) => (s.resources[k] || 0) >= v);
+      return {
+        ...b, affordable,
+        sprite: this.spriteByName(b.name),
+        img: spriteImg(this.spriteByName(b.name), b.name),
+        catLabel: b.cat ? this.CAT[b.cat].label : 'Housing',
+        costList: Object.entries(b.cost).map(([k, v]) => ({ key: k, amount: v, color: this.RES[k].color, short: this.RES[k].label.slice(0, 1) })),
+        cardStyle: 'display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:12px;border:2px solid #ece0c6;background:#fff;opacity:' + (affordable ? '1' : '.62') + ';',
+        btnStyle: affordable ? btnOn : btnOff,
+        btnLabel: affordable ? 'Build' : 'Locked',
+        build: () => this.buildStructure(b.key),
+      };
+    });
+
+    // ---------- Daily Check-in ----------
+    const ci = s.checkin;
+    const li = this.levelInfo(s.xp);
+    const checkedInToday = s.lastCheckinDate === new Date().toDateString();
+    const ciProjectOptions = s.projects.map((p) => {
+      const cat = this.CAT[p.category];
+      const sel = ci.projectId === p.id;
+      return {
+        key: p.id, title: p.title, selected: sel,
+        style: 'display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:11px;cursor:pointer;background:#fff;font-weight:700;font-size:13px;color:#3a3022;transition:all .12s;border:2px solid ' + (sel ? cat.color : '#e7dbc0') + ';box-shadow:' + (sel ? '0 3px 10px ' + cat.color + '40' : 'none') + ';',
+        dotStyle: 'width:12px;height:12px;border-radius:4px;flex:0 0 auto;background:' + cat.color + ';border:1.5px solid rgba(0,0,0,.2);',
+        select: () => this.setCheckin({ projectId: p.id }),
+      };
+    });
+    const timeOptions = Object.keys(this.TIME).map((k) => {
+      const t = this.TIME[k]; const sel = ci.time === k;
+      return {
+        key: k, label: t.label, xp: t.xp,
+        style: 'display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px;border-radius:12px;cursor:pointer;transition:all .12s;background:' + (sel ? '#eef7e9' : '#fbf6ea') + ';border:2px solid ' + (sel ? '#5aa84a' : '#e7dbc0') + ';',
+        labelStyle: 'font-weight:800;font-size:14px;color:' + (sel ? '#3a8a2e' : '#3a3022') + ';',
+        xpStyle: 'font-size:11px;font-weight:700;color:' + (sel ? '#5aa84a' : '#a89a7e') + ';',
+        select: () => this.setCheckin({ time: k }),
+      };
+    });
+    const moodOptions = Object.keys(this.MOODS).map((k) => {
+      const m = this.MOODS[k]; const sel = ci.mood === k;
+      return {
+        key: k, label: m.label,
+        style: 'display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 6px;border-radius:12px;cursor:pointer;transition:all .12s;background:' + (sel ? m.tint : '#fbf6ea') + ';border:2px solid ' + (sel ? m.color : '#e7dbc0') + ';',
+        labelStyle: 'font-weight:800;font-size:13.5px;color:' + (sel ? m.dark : '#5a4f3e') + ';',
+        dotStyle: 'width:15px;height:15px;border-radius:50%;flex:0 0 auto;background:' + m.color + ';box-shadow:inset 0 2px rgba(255,255,255,.45),inset 0 -3px rgba(0,0,0,.15);',
+      };
+    });
+    const ciT = this.TIME[ci.time], ciM = this.MOODS[ci.mood];
+    const previewXp = Math.round(ciT.xp * ciM.mult);
+    const previewRewardList = Object.entries(this.checkinReward(ci.time, ci.mood)).map(([k, v]) => ({ key: k, amount: v, color: this.RES[k].color }));
+    const ciReady = !!ci.projectId && !!ci.text.trim();
+    const checkinLog = s.checkins.map((c) => {
+      const p = s.projects.find((x) => x.id === c.projectId);
+      const cat = p ? this.CAT[p.category] : null;
+      const m = this.MOODS[c.mood];
+      return {
+        id: c.id, text: c.text, when: c.when, xp: c.xp,
+        projTitle: p ? p.title : 'Project',
+        timeLabel: this.TIME[c.time].label, moodLabel: m.label,
+        badgeStyle: 'background:' + (cat ? cat.color : '#9a8b70') + ';color:#fff;font-weight:700;font-size:10.5px;padding:2px 9px;border-radius:99px;letter-spacing:.2px;',
+        moodDot: 'width:10px;height:10px;border-radius:50%;flex:0 0 auto;background:' + m.color + ';',
+      };
+    });
+
+    return {
+      screen: s.screen,
+      isVillage: s.screen === 'village',
+      isProjects: s.screen === 'projects',
+      isProject: s.screen === 'project',
+      isLanding: s.screen === 'landing',
+      isOnboard: s.screen === 'onboard',
+      showAppbar: s.screen === 'village' || s.screen === 'projects' || s.screen === 'project' || s.screen === 'checkin',
+      villageName: s.villageName,
+      streak: s.streak,
+      resourceList, catLegend, tilesView, projects, activeProject, buildables, confetti, loopSteps, catShowcase,
+      flyers: s.flyers.map((f) => ({ ...f, unit: f.unit || '', textColor: f.key === 'xp' ? '#7158c6' : '#3a8a2e' })),
+      celebrate: s.celebrate, celebrateImg: s.celebrate ? spriteImg(s.celebrate.sprite, s.celebrate.landmark) : null, onboard: s.onboard, checkin: s.checkin,
+      isCheckin: s.screen === 'checkin', checkedInToday,
+      xpLevel: li.level, xpPct: li.pct, xpInto: li.into, xpNeed: li.need, xpTotal: s.xp,
+      ciProjectOptions, timeOptions, moodOptions, previewXp, previewRewardList, checkinLog,
+      submitCheckinStyle: ciReady ? okBtn : noBtn,
+      onCheckinText: (e) => this.setCheckin({ text: e.target.value }),
+      submitCheckin: () => this.submitCheckin(),
+      goCheckin: () => this.go('checkin'),
+      toast: s.toast ? { ...s.toast, accent: s.toast.kind === 'good' ? '#5aa84a' : s.toast.kind === 'bad' ? '#d9544e' : s.toast.kind === 'level' ? '#7c6bd0' : '#caa24a' } : null,
+      hasToast: !!s.toast, hasCelebrate: !!s.celebrate, hasFlyers: s.flyers.length > 0,
+      tabVillageStyle: s.screen === 'village' ? tabOn : tabOff,
+      tabProjectsStyle: (s.screen === 'projects' || s.screen === 'project') ? tabOn : tabOff,
+      tabCheckinStyle: s.screen === 'checkin' ? tabOn : tabOff,
+      totalProjects: projects.length,
+      totalMilestonesDone: projects.reduce((a, p) => a + p.done, 0),
+      totalMilestones: projects.reduce((a, p) => a + p.total, 0),
+      inProgressCount: projects.filter((p) => !p.isComplete).length,
+      onboardStep1, onboardStep2: !onboardStep1, categoryOptions, onboardCanContinue,
+      step2Dot: onboardStep1 ? '#e2d5b8' : '#3d8a30',
+      submitLabel: onboardStep1 ? 'Continue →' : (ob.mode === 'full' ? 'Found my village 🏰' : 'Add project'),
+      submitBtnStyle: onboardCanContinue ? okBtn : noBtn,
+      onboardTitle: onboardStep1 ? 'Name your village' : 'Start your first project',
+      onboardSub: onboardStep1 ? 'This is the world your real-world progress will build.' : 'Pick a category — it decides which building grows — then name the quest.',
+      backVisible: !onboardStep1 || ob.mode !== 'full',
+      onOnboardName: (e) => this.setOnboard({ name: e.target.value }),
+      onOnboardTitle: (e) => this.setOnboard({ projectTitle: e.target.value }),
+      submitOnboard: () => this.submitOnboard(),
+      onboardBack: () => { if (!onboardStep1 && ob.mode === 'full') this.setOnboard({ step: 1 }); else this.go(ob.mode === 'full' ? 'landing' : 'projects'); },
+      goVillage: () => this.go('village'),
+      goProjects: () => this.go('projects'),
+      goLanding: () => this.go('landing'),
+      startNewProject: () => this.startNewProject(),
+      startFresh: () => this.startFresh(),
+      dismissCelebrate: () => this.dismissCelebrate(),
+    };
+  }
+}
+</script>
+</body>
+</html>
